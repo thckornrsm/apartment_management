@@ -1,0 +1,18 @@
+npx prisma migrate dev --name init
+npm install express-async-handler
+npm list express-rate-limit
+npm install express-rate-limit
+npm install cookie-parser 
+npm i bcrypt 
+npm i nodemon  
+npx prisma init 
+npm install @prisma/client 
+npm install prisma 
+npm install express cors @prisma/client dotenv mysql2
+npm init -y 
+
+http://localhost:3000/api/v1/auth/register
+
+http://localhost:3000/api/v1/auth/login
+
+http://localhost:3000/api/v1/auth/logout

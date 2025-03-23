@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(TENANT)
+
+  roomId    Int?     @unique // กำหนดให้แต่ละ User มีห้องเดียว
+  room      Room?    @relation(fields: [roomId], references: [id])
+
+  payments  Payment[]
+  maintenanceRequests MaintenanceRequest[]
+  messagesSent     PrivateMessage[] @relation("SenderMessages")
+  messagesReceived PrivateMessage[] @relation("ReceiverMessages")
+  posts     CommunityPost[] @relation("AdminPosts")
+}
+
+model Room {
+  id        Int     @id @default(autoincrement())
+  number    String  @unique // หมายเลขห้อง
+  password  String? // ✅ รหัสผ่านห้อง (เข้ารหัสไว้)
+ 
+  user      User?   @relation // ไม่ต้องใส่ `fields` และ `references` ในฝั่งนี้
+  payments  Payment[]
+  maintenanceRequests MaintenanceRequest[]
+}
+
+model Payment {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  roomId    Int
+  amount    Float
+  waterFee        Float     // ✅ ต้องมี
+  electricityFee  Float     // ✅ ต้องมี
+  totalAmount Float
+  paymentIssuedDate DateTime @default(now())
+  paymentDate DateTime?
+  dueDate   DateTime
+  status    PaymentStatus @default(PENDING)
+  image     String?
+
+  user      User  @relation(fields: [userId], references: [id])
+  room      Room  @relation(fields: [roomId], references: [id])
+}
+
+model CommunityPost {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  createdAt DateTime @default(now())
+  priority  Priority
+  adminId   Int
+
+  admin     User @relation("AdminPosts", fields: [adminId], references: [id])
+}
+
+model PrivateMessage {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  message    String
+  createdAt  DateTime @default(now())
+
+  sender     User @relation("SenderMessages", fields: [senderId], references: [id])
+  receiver   User @relation("ReceiverMessages", fields: [receiverId], references: [id])
+}
+
+model MaintenanceRequest {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  roomId     Int
+  category   MaintenanceCategory
+  description String
+  image      String?
+  status     MaintenanceStatus @default(PENDING)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user       User      @relation(fields: [userId], references: [id])
+  room       Room      @relation(fields: [roomId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  TENANT
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum Priority {
+  NORMAL
+  URGENT
+}
+
+enum MaintenanceCategory {
+  ELECTRICAL
+  PLUMBING
+  FURNITURE
+  APPLIANCE
+  OTHER
+}
+
+enum MaintenanceStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}

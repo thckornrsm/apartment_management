@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_apartment
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: apartment_manager
+    ports:
+      - "5433:5432"  # เปลี่ยนจาก 5432 เป็น 5433 เพื่อไม่ให้ชนกัน
+    volumes:
+      - postgres_apartment_data:/var/lib/postgresql/data
+    networks:
+      - apartment_network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_apartment
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5051:80"  # เปลี่ยนจาก 5050 เป็น 5051 เพื่อไม่ให้ชนกัน
+    depends_on:
+      - postgres
+    networks:
+      - apartment_network
+
+networks:
+  apartment_network:
+    driver: bridge
+
+volumes:
+  postgres_apartment_data:
+    driver: local
