@@ -58,11 +58,12 @@ router.put("/payments/:id/status", verifyToken, verifyAdmin, paymentController.u
 
 // // ✅ API การแจ้งซ่อม (Maintenance Requests)
 router.post("/maintenance", verifyToken,apiLimit, maintenanceController.createRequest);
-router.get("/maintenance", verifyToken, maintenanceController.getMyRequests);
-router.get("/maintenance/:id", verifyToken, maintenanceController.getRequestById);
-router.put("/maintenance/:id", verifyToken, maintenanceController.updateRequest);
-router.delete("/maintenance/:id", verifyToken, maintenanceController.deleteRequest);
+router.get("/maintenance", verifyToken, apiLimit,maintenanceController.getMyRequests);
+router.get("/maintenance/:id", verifyToken, apiLimit,maintenanceController.getRequestById);
+router.put("/maintenance/:id", verifyToken, apiLimit,maintenanceController.updateRequest);
+router.delete("/maintenance/:id", verifyToken, apiLimit,maintenanceController.deleteRequest);
 router.put("/maintenance/:id/status", verifyToken, verifyAdmin, maintenanceController.updateStatusByAdmin);
+
 
 // // ✅ API ผู้ใช้ (Users)
 // router.post("/users", apiLimit, userController.createUser);

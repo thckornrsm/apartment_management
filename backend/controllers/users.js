@@ -11,7 +11,8 @@ exports.getAllUsers = async (req, res) => {
         email: true,
         role: true,
         roomId: true
-      }
+      },orderBy: {
+        id: 'asc' }
     });
     res.json(users);
   } catch (err) {

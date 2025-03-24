@@ -46,6 +46,7 @@ exports.getMyRequests = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 exports.getRequestById = async (req, res) => {
   const { id } = req.params;
 
@@ -138,3 +139,4 @@ exports.updateStatusByAdmin = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
